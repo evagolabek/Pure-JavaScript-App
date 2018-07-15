@@ -1,6 +1,5 @@
 document.getElementById('issueInputForm').addEventListener('submit', saveIssue);
 
-//defining varaibles that are assigned to user input values
 function saveIssue(e) {
   var issueDesc = document.getElementById('issueDescInput').value;
   var issueSeverity = document.getElementById('issueSeverityInput').value;
@@ -16,7 +15,6 @@ function saveIssue(e) {
     status: issueStatus
   }
 
-  //inserting the object in local storage, first checking if there is something  in local localStorage
   if (localStorage.getItem('issues') == null) {
     var issues = [];
     issues.push(issue);
@@ -27,14 +25,10 @@ function saveIssue(e) {
     localStorage.setItem('issues', JSON.stringify(issues));
   }
 
-
-
-
   document.getElementById('issueInputForm').reset();
 
   fetchIssues();
 
-  //prevent form from submiting
   e.preventDefault();
 }
 
@@ -52,6 +46,19 @@ function setStatusClosed(id) {
   fetchIssues();
 }
 
+function deleteIssue(id) {
+  var issues = JSON.parse(localStorage.getItem('issues'));
+
+  for (var i = 0; i < issues.length; i++) {
+    if (issues[i].id == id) {
+      issues.splice(i, 1);
+    }
+  }
+
+  localStorage.setItem('issues', JSON.stringify(issues));
+
+  fetchIssues();
+}
 
 function fetchIssues() {
   var issues = JSON.parse(localStorage.getItem('issues'));
@@ -66,15 +73,14 @@ function fetchIssues() {
     var assignedTo = issues[i].assignedTo;
     var status = issues[i].status;
 
-    issuesList.innerHTML += '<div class="well">'+
-                             '<h6>Issue ID: ' + id + '</h6>'+
-                             '<p><span class="label label-info">' + status + '</span></p>'+
-                             '<h3>' + desc + '</h3>' +
-                             '<p><span class="glyphicon glyphicon-time"></span> ' + severity + '</p>'+
-                             '<p><span class="glyphicon glyphicon-user"></span> ' + assignedTo + '</p>'+
-                             '<a href="#" onClick="setStatusClosed(\''+id+'\')" class="btn btn-warning">Close</a>'+
-                             '<a href="#" onClick="deleteIssue(\''+id+'\')" class="btn btn-danger">Delete</a>'+
-                             '</div>';
-
+    issuesList.innerHTML +=   '<div class="well">'+
+                              '<h6>Issue ID: ' + id + '</h6>'+
+                              '<p><span class="label label-info">' + status + '</span></p>'+
+                              '<h3>' + desc + '</h3>'+
+                              '<p><span class="glyphicon glyphicon-time"></span> ' + severity + '</p>'+
+                              '<p><span class="glyphicon glyphicon-user"></span> ' + assignedTo + '</p>'+
+                              '<a href="#" onclick="setStatusClosed(\''+id+'\')" class="btn btn-warning">Close</a> '+
+                              '<a href="#" onclick="deleteIssue(\''+id+'\')" class="btn btn-danger">Delete</a>'+
+                              '</div>';
   }
 }
